@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel", "numpy>=1.21"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ligotools"
+version = "0.1.0"
+description = "Utilities for the LIGO event tutorial (STAT 159/259 HW3)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Ligo Scientific Collaboration (LSC)" },
+  { name = "<YOUR NAME>" }
+]
+
+dependencies = [
+  "numpy>=1.21",
+  "scipy>=1.7",
+  "matplotlib>=3.5",
+  "h5py>=3.6"
+]
+
+[project.urls]
+Homepage = "https://github.com/UCB-stat-159-f25/hw3-paulverdickt"
+
+[tool.setuptools.packages.find]
+include = ["ligotools*"]
