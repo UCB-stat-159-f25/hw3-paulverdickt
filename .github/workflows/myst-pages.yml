@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node is required for mystmd CLI
+      # MyST CLI requires Node
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -28,13 +28,12 @@ jobs:
       - name: Install MyST
         run: npm install -g mystmd@latest
 
-      # Build with default settings (verbose logs)
-      - name: Build site (verbose)
+      - name: Build site (plain)
         run: |
           set -euxo pipefail
           myst --version
           echo "Repo tree before build:"; ls -la
-          myst build --log-level info
+          myst build
           echo "After build, show possible output dirs:"
           ls -la || true
           ls -la .myst || true
@@ -42,18 +41,18 @@ jobs:
           ls -la .myst/build || true
           ls -la _site || true
 
-      # Normalize output into _site/ regardless of where myst wrote it
+      # Copy whatever MyST produced into _site for upload
       - name: Normalize site directory to _site
-        id: norm
         run: |
           set -euxo pipefail
+          SRC=""
           if [ -d "_site" ]; then SRC="_site";
           elif [ -d ".myst/site" ]; then SRC=".myst/site";
           elif [ -d ".myst/build" ]; then SRC=".myst/build";
           else
-            echo "No site directory found"; find . -maxdepth 2 -type d -print; exit 1;
+            echo "No site directory found"; find . -maxdepth 3 -type d -print; exit 1;
           fi
-          echo "Source site dir is: $SRC"
+          echo "Using source: $SRC"
           rm -rf _site
           mkdir -p _site
           cp -a "$SRC/." _site/
