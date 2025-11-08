@@ -32,10 +32,24 @@ jobs:
       - name: Build site
         run: myst build
 
+      # NEW: ensure there is an index.html at the site root
+      - name: Create index.html at site root
+        run: |
+          set -e
+          # Grab the first HTML built into the public/ folder
+          HTML=$(ls _build/site/public/*.html | head -n1)
+          if [ -z "$HTML" ]; then
+            echo "No HTML found in _build/site/public/; failing."
+            exit 1
+          fi
+          cp "$HTML" _build/site/index.html
+          echo "Root index.html created from: $HTML"
+          ls -lah _build/site | head
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _build/site
+          path: _build/site   # upload the site root that now has index.html
 
   deploy:
     needs: build
