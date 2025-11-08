@@ -1,20 +1,17 @@
+
 version: 1
-
 project:
-  title: "STAT 159/259 HW3 — Paul Verdickt"
+  title: "HW3 – LIGO Tutorial (Paul Verdickt)"
   authors: ["Paul Verdickt"]
-  # Make it explicit which files to render:
-  files:
-    - index.md
-    - LOSC_Event_tutorial.ipynb
-    - hw03_description.md
-    - README.md
-
+  github: ucb-stat-159-f25/hw3-paulverdickt
 site:
-  template: article-theme  # simple site with tabs
-
-nav:
-  - Home: index.md
-  - Notebook: LOSC_Event_tutorial.ipynb
-  - HW Description: hw03_description.md
-  - Repo README: README.md
+  template: article-theme
+  # The base path matters for org Pages:
+  base: /hw3-paulverdickt/
+  nav:
+    - text: Home
+      link: index.md
+    - text: Notebook
+      link: LOSC_Event_tutorial.ipynb
+    - text: README
+      link: README.md

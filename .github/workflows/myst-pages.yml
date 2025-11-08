@@ -1,66 +1,51 @@
-name: Build and Deploy MyST site
+name: build-and-deploy-myst
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Install MyST
         run: npm install -g mystmd@latest
 
-      - name: Build site
-        run: myst build
+      - name: Build MyST site
+        run: myst build --html
 
-      # NEW: ensure there is an index.html at the site root
-      - name: Create index.html at site root
+      # Make sure GitHub Pages has a root index.html
+      - name: Create root index.html
         run: |
           set -e
-          # Grab the first HTML built into the public/ folder
-          HTML=$(ls _build/site/public/*.html | head -n1)
-          if [ -z "$HTML" ]; then
-            echo "No HTML found in _build/site/public/; failing."
-            exit 1
+          if [ -f _build/site/content/index.html ]; then
+            cp _build/site/content/index.html _build/site/index.html
           fi
-          cp "$HTML" _build/site/index.html
-          echo "Root index.html created from: $HTML"
-          ls -lah _build/site | head
+          ls -lah _build/site | head -n 50
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _build/site   # upload the site root that now has index.html
+          path: _build/site
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
