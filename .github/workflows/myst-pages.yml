@@ -19,13 +19,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: mystmd/setup-mystmd@v1
+
+      # Install Node (needed for mystmd CLI)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Install MyST CLI globally
+      - name: Install MyST
+        run: npm install -g mystmd@latest
+
+      # Build the site
       - name: Build site
         run: myst build
+
+      # Upload built site as GitHub Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
   deploy:
     environment:
       name: github-pages
