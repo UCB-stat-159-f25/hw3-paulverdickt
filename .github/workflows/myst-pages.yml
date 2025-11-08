@@ -1,8 +1,9 @@
-name: build-and-deploy-myst
+name: Build and Deploy MyST site
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,29 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Install MyST
-        run: npm install -g mystmd@latest
-
-      - name: Build MyST site
-        run: myst build --html
-
-      # Make sure GitHub Pages has a root index.html
-      - name: Create root index.html
-        run: |
-          set -e
-          if [ -f _build/site/content/index.html ]; then
-            cp _build/site/content/index.html _build/site/index.html
-          fi
-          ls -lah _build/site | head -n 50
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - run: npm install -g mystmd@latest
+      - run: myst build
+      - run: cp _build/site/content/index.html _build/site/index.html
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: _build/site
 

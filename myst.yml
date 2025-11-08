@@ -1,12 +1,12 @@
-
 version: 1
 project:
-  title: "HW3 – LIGO Tutorial (Paul Verdickt)"
-  authors: ["Paul Verdickt"]
+  title: "HW3 – LIGO Event Tutorial"
+  authors:
+    - Paul Verdickt
   github: ucb-stat-159-f25/hw3-paulverdickt
+
 site:
   template: article-theme
-  # The base path matters for org Pages:
   base: /hw3-paulverdickt/
   nav:
     - text: Home

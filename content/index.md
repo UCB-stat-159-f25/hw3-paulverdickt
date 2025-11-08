@@ -1,8 +1,8 @@
-# HW3: Binary Black Hole Signals (LIGO Open Data)
+# HW3 – LIGO Event Tutorial
 
-Welcome! Use the tabs above, or start here:
+Welcome to my MyST site for HW3.  
+Use the navigation bar above to explore:
 
-- **Main Notebook:** See *Notebook* tab
-- **Repository README:** See *README* tab
-- **Binder (optional):**  
-  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucb-stat-159-f25/hw3-paulverdickt/HEAD)
+- **Notebook:** The main LIGO signal analysis notebook  
+- **README:** Overview of the project and GitHub links  
+- **Binder:** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ucb-stat-159-f25/hw3-paulverdickt/HEAD)
