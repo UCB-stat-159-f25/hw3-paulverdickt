@@ -25,15 +25,23 @@ jobs:
         with:
           node-version: "20"
 
-      # Install MyST CLI globally
+      # Install MyST CLI
       - name: Install MyST
         run: npm install -g mystmd@latest
 
-      # Build the site
+      # Build the site (force output into _site so upload step always finds it)
       - name: Build site
-        run: myst build
+        run: myst build --site-dir _site
 
-      # Upload built site as GitHub Pages artifact
+      # (Optional) Show what was built (helps if debugging)
+      - name: Show output tree
+        run: |
+          pwd
+          ls -la
+          ls -la _site || true
+          ls -la .myst || true
+
+      # Upload built site as artifact for GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
