@@ -1,4 +1,5 @@
 name: myst-build-deploy
+
 on:
   push:
     branches: [ "main" ]
@@ -18,19 +19,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Node is required for mystmd CLI
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+
       - name: Install MyST
         run: npm install -g mystmd@latest
 
+      # Build with default settings (verbose logs)
       - name: Build site (verbose)
         run: |
           set -euxo pipefail
           myst --version
           echo "Repo tree before build:"; ls -la
-          myst build --site-dir _site --log-level info
-          echo "Output dir listing:"; ls -la _site
+          myst build --log-level info
+          echo "After build, show possible output dirs:"
+          ls -la || true
+          ls -la .myst || true
+          ls -la .myst/site || true
+          ls -la .myst/build || true
+          ls -la _site || true
+
+      # Normalize output into _site/ regardless of where myst wrote it
+      - name: Normalize site directory to _site
+        id: norm
+        run: |
+          set -euxo pipefail
+          if [ -d "_site" ]; then SRC="_site";
+          elif [ -d ".myst/site" ]; then SRC=".myst/site";
+          elif [ -d ".myst/build" ]; then SRC=".myst/build";
+          else
+            echo "No site directory found"; find . -maxdepth 2 -type d -print; exit 1;
+          fi
+          echo "Source site dir is: $SRC"
+          rm -rf _site
+          mkdir -p _site
+          cp -a "$SRC/." _site/
+          echo "Final _site contents:"; ls -la _site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -46,4 +73,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-
