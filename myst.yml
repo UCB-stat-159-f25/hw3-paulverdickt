@@ -1,0 +1,17 @@
+version: 1
+
+project:
+  title: HW3 – LIGO Event Analysis
+  authors:
+    - name: Paul Verdickt
+
+site:
+  template: article-theme
+  options:
+    logo: null
+
+nav:
+  - Home: README.md
+  - Notebook: LOSC_Event_tutorial.ipynb
+  - Description: hw03_description.md
+
