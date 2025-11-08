@@ -34,21 +34,22 @@ jobs:
           myst --version
           echo "Repo tree before build:"; ls -la
           myst build
-          echo "After build, show possible output dirs:"
-          ls -la || true
-          ls -la .myst || true
-          ls -la .myst/site || true
-          ls -la .myst/build || true
-          ls -la _site || true
+          echo "After build, show likely output dirs:"
+          for d in _site .myst .myst/site .myst/build _build _build/site _build/html; do
+            echo "---- listing: $d"; ls -la "$d" || true
+          done
 
       # Copy whatever MyST produced into _site for upload
       - name: Normalize site directory to _site
         run: |
           set -euxo pipefail
-          SRC=""
-          if [ -d "_site" ]; then SRC="_site";
+          # Try the common locations in priority order
+          if   [ -d "_site" ]; then SRC="_site";
           elif [ -d ".myst/site" ]; then SRC=".myst/site";
           elif [ -d ".myst/build" ]; then SRC=".myst/build";
+          elif [ -d "_build/site" ]; then SRC="_build/site";
+          elif [ -d "_build/html" ]; then SRC="_build/html";
+          elif [ -d "_build" ]; then SRC="_build";
           else
             echo "No site directory found"; find . -maxdepth 3 -type d -print; exit 1;
           fi
