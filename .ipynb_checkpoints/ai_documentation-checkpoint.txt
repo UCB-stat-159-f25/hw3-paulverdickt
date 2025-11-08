@@ -1,0 +1,1 @@
+Used AI for syntax in bash, yml, and ipynb. Helped as well with step-by-step solutions for fixing my website build and deploy when they failed. 
