@@ -1,5 +1,4 @@
-kname: myst-build-deploy
-
+name: myst-build-deploy
 on:
   push:
     branches: [ "main" ]
