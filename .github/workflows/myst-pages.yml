@@ -2,7 +2,7 @@ name: Build and Deploy MyST site
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -10,18 +10,48 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install -g mystmd@latest
-      - run: myst build
-      - run: cp _build/site/content/index.html _build/site/index.html
-      - uses: actions/upload-pages-artifact@v3
+          node-version: '20'
+
+      - name: Install MyST CLI
+        run: npm install -g mystmd@latest
+
+      - name: Build MyST site
+        run: myst build
+
+      - name: Normalize homepage to root
+        run: |
+          set -e
+          echo "Checking for built index.html..."
+          if [ -f "_build/site/index.html" ]; then
+            echo "index.html already at root"
+          elif [ -f "_build/site/content/index.html" ]; then
+            echo "Found at content/index.html → copying to root"
+            cp _build/site/content/index.html _build/site/index.html
+          elif [ -f "_build/site/content/index/index.html" ]; then
+            echo "Found at content/index/index.html → copying to root"
+            cp _build/site/content/index/index.html _build/site/index.html
+          else
+            echo "ERROR: No index.html found, printing directory structure"
+            ls -R _build/site || true
+            exit 1
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _build/site
 
@@ -32,5 +62,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
